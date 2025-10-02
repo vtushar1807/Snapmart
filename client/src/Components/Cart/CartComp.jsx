@@ -7,6 +7,8 @@ import { useEffect, useState } from "react"
 import { emptyCart } from "../../Redux/cartReducer"
 import { ClipLoaderFn } from "../Spinner/Spinners"
 import { fetchCartItems } from "../../Networking/getAPIdata"
+import { MdOutlineAdd } from "react-icons/md";
+import { GrFormSubtract } from "react-icons/gr";
 
 export const CartComp = ()=>{
 
@@ -84,7 +86,7 @@ export const CartComp = ()=>{
 
                     <div className="ms-5 p-2 w-100 me-5">
                         <span style={{color:"#231159ff"}} onClick={()=>navigate(`/product/${items.id}`)} className="fw-bold">{items.title}</span><br/>
-                        <span onClick={()=>navigate(`/product/${items.id}`)} >{items.brand ? items.brand : "Exclusive"}</span> <span style={{float:"right"}}><img onClick={() => dispatch(removeItemFromCart(items))} height="21px" src="https://img.icons8.com/?size=100&id=64k1WPeHn58b&format=png&color=FA5252" alt="" /></span><br/>
+                        <span onClick={()=>navigate(`/product/${items.id}`)} >{items.brand ? items.brand : "Exclusive"}</span> <span style={{float:"right"}}><img onClick={() => dispatch(removeItemFromCart(items))} height="21px" src="https://img.icons8.com/?size=100&id=64k1WPeHn58b&format=png&color=FA5252" alt="" /></span><span style={{float:"right", fontWeight:"bold", marginRight:"20px"}}><MdOutlineAdd/><span style={{border:"2px solid green", padding:"1px 6px", margin:"4px", fontSize:"14px"}}>{2}</span><GrFormSubtract/></span><br/>
                         <span onClick={()=>navigate(`/product/${items.id}`)} className="text-danger fw-bold">₹{items.price}</span>
                         <span onClick={()=>navigate(`/product/${items.id}`)} style={{fontSize:"10px", padding:"1px 6px 3px", borderRadius:"7px"}} className="bg-warning fw-bold">{items.discountPercentage}% OFF</span><br/>
                         <span onClick={()=>navigate(`/product/${items.id}`)} style={{fontSize:"10px"}} className="text-secondary">{items.availabilityStatus}</span>

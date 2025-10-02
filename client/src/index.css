@@ -811,3 +811,30 @@ h6{
 body{
   padding-top: 65px;
 }
+
+select{
+  background-color:transparent;
+  color: white;
+  outline: none;
+  border: none;
+  appearance: none;
+  padding: 12px 12px;
+}
+option{
+  background-color: white;
+  color: #1e0c60;
+  font-weight: bold;
+}
+option:hover{
+  background-color: #1e0c60 !important;
+  color: white;
+}
+
+.subscribe {
+    border-radius: 20px;
+    height: 45px;
+    width: 300px;
+    padding-left: 13px;
+    border: none;
+    outline: none;
+}

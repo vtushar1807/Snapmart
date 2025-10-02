@@ -1,18 +1,18 @@
 
 export const fetchAPIData = async(cat)=>{
 
-        const url = `https://dummyjson.com/products/category/${cat}`;
+        const url = `http://localhost:1001/product/category/${cat}`;
 
         try{
             const response = await fetch(url, {method:"GET"});
-            const result = await response.json();    
+            // const result = await response.json();
 
-            if(result)
-            {
+            if(response)
+            {   
                 return({
                     status:"Success",
                     data:{
-                        post:result.products,
+                        post:response.data.post,
                     }
                 })
             }

@@ -6,9 +6,10 @@ import { useNavigate } from "react-router";
 import { Container,Row,Col } from "react-bootstrap";
 import { CardComp } from "../../Card/CardComp";
 
-import { setGroceryFn } from "../../../Redux/productReducer";
+import { fetchProducts, setGroceryFn } from "../../../Redux/productReducer";
 import { fetchAPIData } from "../../../Networking/getAPIdata";
 import { removeItemFromCart, addItemToCart } from "../../../Redux/cartReducer";
+
 
 export const Grocery = ()=>{
 
@@ -43,17 +44,16 @@ export const Grocery = ()=>{
 
         try{
 
-            const result = await fetchAPIData("groceries");
+            const resultAction = await dispatch(fetchProducts("groceries"));
 
-            if(result.status==="Success")
+            if(fetchProducts.fulfilled.match(resultAction))
             {
-                dispatch(setGroceryFn(result.data.post));
+                dispatch(setGroceryFn(resultAction.payload));
             }
 
-            else{
+            else if(fetchProducts.rejected.match(resultAction)){
                 console.log("Error 404! Data not Found");
             }
-            
         }
         catch(err)
         {

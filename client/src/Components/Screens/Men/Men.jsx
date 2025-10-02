@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { Container,Row,Col } from "react-bootstrap";
 import { CardComp } from "../../Card/CardComp";
-import { setMenFn } from "../../../Redux/productReducer";
+import { setMenFn, fetchProducts } from "../../../Redux/productReducer";
 import { fetchAPIData } from "../../../Networking/getAPIdata";
 import { removeItemFromCart, addItemToCart } from "../../../Redux/cartReducer";
 
@@ -39,16 +39,16 @@ export const Men = ()=>{
     const getPost = async ()=>{
 
         try{
+            const resultAction = await dispatch(fetchProducts("mens-shirts"));
 
-            const result = await fetchAPIData("mens-shirts");
-
-            if(result.status==="Success")
+            if(fetchProducts.fulfilled.match(resultAction))
             {
-                dispatch(setMenFn(result.data.post));
+                dispatch(setMenFn(resultAction.payload));
             }
 
-            else{
-                console.log("Error 404! Data not Found");
+            else if(fetchProducts.rejected.match(resultAction))
+            {
+                console.log("Error 404! Data not Found: ", resultAction.msg);
             }
             
         }

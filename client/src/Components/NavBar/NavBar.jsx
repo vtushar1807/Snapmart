@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { FiLogOut } from "react-icons/fi";
 
 export const NavBar = () => {
 
@@ -21,6 +22,11 @@ export const NavBar = () => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((store) => store.logInRed.isLogin);
   let cartItems=useSelector((store) => store.cartRed.cartItems);
+  const loginUsername = useSelector(store => store.logInRed.loggedInUser.username);
+
+  const handleWelcome = (loginUsername)=>{
+      return loginUsername.toUpperCase();
+  }
 
 
   const formik = useFormik({
@@ -80,7 +86,7 @@ export const NavBar = () => {
         
         <form onSubmit={formik.handleSubmit}>
         <div className="d-flex align-items-center flex-grow-1 me-3">
-      <input type="text" className='navSearch' name="search" placeholder='Search for product category' {...formik.getFieldProps('search')}/><button className='search-btn fst-italic' type="submit"><FaSearch  /></button>
+      <input type="text" className='navSearch' name="search" placeholder='Search for product category' {...formik.getFieldProps('search')}/><button className='search-btn fst-italic' type="submit"><FaSearch/></button>
           {
             formik.touched.search && formik.errors.search ? <span style={{fontSize:"10px", fontStyle:"italic"}} className='text-white mt-0'>{formik.errors.search}</span>:null
           }
@@ -101,7 +107,11 @@ export const NavBar = () => {
           Cart<span className='fw-bold' style={{fontSize:"12px", position:"absolute", top:"5px", left:"65px", color:"black", backgroundColor:"white", padding:"0px 5px", borderRadius:"20px"}}>{cartItems.length>0 ? cartItems.length : null}</span>
           
           </Nav.Link>
-          <button className='text-white p-0 m-0 nav-link' style={{position:"relative", left:"80px"}} onClick={() => isLoggedIn? handleLogin() : handleLogout()} ><VscAccount className='fs-15'/> { isLoggedIn ? "LogOut" : "Login/Signup"}</button>
+          <button className='text-white p-0 m-0 nav-link' style={{position:"relative", left:"80px"}} onClick={() => isLoggedIn? handleLogin() : handleLogout()} >{ isLoggedIn ? 
+          <>
+          Welcome {handleWelcome(loginUsername)} <FiLogOut className='ms-1'/>
+          </>
+          : "Login/Signup"}</button>
             
           </Nav>
         </Navbar.Collapse>

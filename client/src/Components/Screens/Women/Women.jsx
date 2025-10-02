@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { Container, Row, Col } from "react-bootstrap";
 import { CardComp } from "../../Card/CardComp";
-import { setWomenFn } from "../../../Redux/productReducer";
+import { setWomenFn, fetchProducts } from "../../../Redux/productReducer";
 import { fetchAPIData } from "../../../Networking/getAPIdata";
 import { removeItemFromCart, addItemToCart } from "../../../Redux/cartReducer";
 
@@ -35,16 +35,21 @@ export const Women = () => {
   }, [isLoggedIn]);
 
   const getPost = async () => {
-    try {
-      const result = await fetchAPIData("womens-dresses");
-      console.log(result.data.post);
+    
+        try{
+            const resultAction = await dispatch(fetchProducts("womens-dresses"));
 
-      if (result.status === "Success") {
-        dispatch(setWomenFn(result.data.post));
-      } else {
-        console.log("Error 404! Data not Found");
-      }
-    } catch (err) {
+            if(fetchProducts.fulfilled.match(resultAction))
+            {
+                dispatch(setWomenFn(resultAction.payload));
+            }
+
+            else if(fetchProducts.rejected.match(resultAction))
+            {
+                console.log("Error 404! Data not Found: ", resultAction.msg);
+            }
+                   
+            } catch (err) {
       console.log("Error", err);
     } finally {
       setLoading(false);

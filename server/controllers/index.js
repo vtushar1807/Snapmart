@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
 const USER = require("../model/auth");
+const PRODUCT = require("../model/product");
+const SUBS = require("../model/subscribe");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = process.env.SECRET_KEY || "mySuperSecretKey_1807@$";
 const bcrypt = require("bcrypt");
 const {hashPassword, compareWithhashed} = require("../util/bcrypt")
 const {createToken} = require("../util/auth");
+const nodemailer = require("nodemailer");
+const fs = require("fs").promises;
+const path = require("path");
 
 async function handleCreateNewUser(req, res){
 
@@ -71,6 +76,22 @@ function handleHomepage(req,res){
     }
 }
 
+async function handleProduct(req,res){
+    
+    try {
+        const category = req.params.cat;
+        const response = await PRODUCT.find({category:category});
+
+        if(response){
+           return res.status(200).json({msg:"Successfully fetched Products", product:response});
+        }
+        return res.status(400).json({msg:"Invalid Category"});
+
+    } catch (error) {
+       return res.status(500).json({msg:"Internal Server Error"});
+    }
+}
+
 async function handleLogout(req, res){
 
     return res.clearCookie("token", {
@@ -80,10 +101,71 @@ async function handleLogout(req, res){
 
 }
 
+async function handleSubscribe(req,res){
+
+    // const testAccount = await nodemailer.createTestAccount();
+
+    // const transporter = await nodemailer.createTransport({
+    //     host:"smtp.ethereal.email",
+    //     port:587,
+    //     secure:false,
+    //     auth:{
+    //         user:testAccount.user,
+    //         pass:testAccount.pass,
+    //     },
+    // })
+
+    const {username, email} = req.body;
+    const checkSub = await SUBS.findOne({subscribedEmail:email});
+
+    if(checkSub)
+        return res.status(409).json({msg:"Already subscribed"});
+    
+
+
+    let emailHtml = '';
+
+    try {
+        const filePath = path.resolve(__dirname, '..', 'util', 'subscribeMail.html');
+        emailHtml = await fs.readFile(filePath, 'utf-8');
+    } catch (error) {
+        console.log("Internal error in reading html: ", error);
+    }
+
+    try {
+        const transporter = await nodemailer.createTransport({
+    service:"gmail",
+    auth:{
+        user:"tusharverma1807@gmail.com",
+        pass:"ytqeeqfnmjyawyke"
+    }
+    })
+    
+    const info = await transporter.sendMail({
+        from:"<tusharverma1807@gmail.com>",
+        to:"tusharverma29588@gmail.com",
+        subject:"Subscribed",
+        // text:`Congratulations! You have subscribed to Snapmart`,
+        html:`
+        Congratulations🎉. ${username.toUpperCase()} you have successfully subscribed Snapmart.
+        ${emailHtml}`
+    })
+
+    await SUBS.create({
+        subscribedEmail:email,
+    });
+    return res.status(201).json({msg:"Subscription added successfully"});
+    } catch (error) {
+        return res.status(500).json({msg:"Internal Server Error"});
+    }
+}
+
 module.exports = {
 
     handleCreateNewUser,
     handleValidateLogin,
     handleHomepage,
-    handleLogout
+    handleLogout,
+    handleProduct,
+    handleSubscribe
 }

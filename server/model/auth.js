@@ -16,7 +16,30 @@ const userSchema = new mongoose.Schema({
     password:{
         type:String,
         required:true,
-    }
+    },
+
+    cartHistory:[
+        item={
+            id:{
+                type:Number,
+            },
+            name:{
+                type:String,
+            },
+            price:{
+                type:Number,
+            },
+            discountPercent:{
+                type:Number,
+            },
+            availabilityStatus:{
+                type:String,
+            },
+            quantity:{
+                type:Number,
+            }
+        }
+    ]
 
 })
 

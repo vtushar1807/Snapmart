@@ -21,9 +21,10 @@ import Card from 'react-bootstrap/Card';
 
 import { useNavigate } from 'react-router';
 import { accessHomepage } from '../../../Redux/productReducer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { removeLogInFn,setLogInFn } from '../../../Redux/loginReducer';
+import { subscribeUser } from '../../../Redux/productReducer';
 
 
 const CarouselImage = [a,b,c,d,e,f];
@@ -57,6 +58,25 @@ export const  Home = ()=>{
 
   const naviagte = useNavigate();
   const dispatch=useDispatch();
+  const currentUser=useSelector(store => store.logInRed.loggedInUser);
+
+
+  const handleSubscribe = async (currentUser)=>{
+      const resultAction = await dispatch(subscribeUser(currentUser));
+
+      if(subscribeUser.fulfilled.match(resultAction)){
+        // console.log("User subscribed successfully");
+        console.log("Subscription added: ", resultAction.payload.msg);
+        
+      }
+
+      else if(subscribeUser.rejected.match(resultAction)){
+        if(resultAction.payload=="Already Subscribed🚫")
+          console.warn("Email is already on the list");
+        else
+          console.log("Subscription Error: ", resultAction.payload);
+      }
+  }
   
   
 
@@ -88,7 +108,6 @@ export const  Home = ()=>{
             console.log("Require Login");
           }
 
-
     } catch (error) {
       console.log("Auth Error");
     }
@@ -101,7 +120,7 @@ export const  Home = ()=>{
 
           <Row className='w-100 mt-5 mb-4 img-nav' style={{color:"rgba(40, 11, 104, 1)"}}>
         
-        <Col onClick={() => naviagte("/grocery")}><img className='home-images' src={grocery} alt="" /><br/><p className='home-op-title' style={{marginLeft:"34px"}}>Grocery</p></Col>
+        <Col onClick={() => naviagte("/product/category/groceries")}><img className='home-images' src={grocery} alt="" /><br/><p className='home-op-title' style={{marginLeft:"34px"}}>Grocery</p></Col>
         <Col onClick={() => naviagte("/smartphones")}><img className='home-images' src={smartphone} alt="" /><br/><p className='home-op-title' style={{marginLeft:"25px"}}>Smartphones</p></Col>
         <Col onClick={() => naviagte("/jewellery")}><img className='home-images' src={jewellary} alt="" /><br/><p className='home-op-title' style={{marginLeft:"38px"}}>Jewellery</p></Col>
         <Col onClick={() => naviagte("/women")}><img className='home-images' src={women} style={{padding:"10px"}}  alt="" /><br/><p className='home-op-title' style={{marginLeft:"40px"}}>Women</p></Col>
@@ -215,7 +234,7 @@ export const  Home = ()=>{
 
 <p className='fw-bold mt-5 mb-0 fs-2'>Stay Updated with SnapMart</p>
 <p className='mt-4'>Get exclusive deals, new arrivalsand shopping tips delivered to your inbox</p>
-<div className='d-flex w-100 mt-2' style={{justifyContent:"center"}}><input placeholder="Enter your email address" type="text" style={{borderRadius:"20px", height:"45px", width:"300px", outline:"none", paddingLeft:"13px", border:"none"}} /> <button className='sub-btn fw-bold dark-heading'>Subscribe</button></div>
+<div className='d-flex w-100 mt-2' style={{justifyContent:"center"}}><input className='subscribe' placeholder="Enter your email address" type="text" /> <button onClick={() => handleSubscribe(currentUser)} className='sub-btn fw-bold dark-heading'>Subscribe</button></div>
 
 </Row>
 </Container>

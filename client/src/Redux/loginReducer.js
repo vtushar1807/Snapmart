@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
     isLogin:false,
-    loggedInUser:{}
+    loggedInUser:{},
 }
 
 //ACTIONS
@@ -68,7 +68,7 @@ export const LogInSliceReducer = createSlice({
     extraReducers:(builder)=>{
         builder.addCase(validateUser.fulfilled, (state, action)=>{
             state.isLogin=true;
-            state.user=action.payload.user;
+            state.loggedInUser=action.payload.user;
         }),
 
         builder.addCase(validateUser.rejected, (state, action)=>{
