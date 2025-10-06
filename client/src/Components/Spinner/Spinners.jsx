@@ -11,6 +11,8 @@ export const ClipLoaderFn = (props)=>{
         cssOverride={{
           marginTop:props.mTop,
           marginBottom:props.mBottom,
+
+          paddingTop:props.pTop,
         }}
         size={80}
         aria-label="Loading Spinner"

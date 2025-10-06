@@ -61,7 +61,6 @@ export const subscribeUser = createAsyncThunk('subscribeUser', async(user, {reje
             const data = await response.json();
 
             if(response.ok){
-
                 alert('Subscription added successfully🎉');
                 return data;
                 }

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import { Container, Row, Col } from "react-bootstrap";
 import { CardComp } from "../../Card/CardComp";
 import { setJewelleryFn, fetchProducts } from "../../../Redux/productReducer";
-import { fetchAPIData } from "../../../Networking/getAPIdata";
+// import { fetchAPIData } from "../../../Networking/getAPIdata";
 import { removeItemFromCart, addItemToCart } from "../../../Redux/cartReducer";
 
 export const Jewellery = () => {
@@ -83,7 +83,7 @@ export const Jewellery = () => {
            jewelleryItems.map((item) => (
                 <>
                   <Col sm="4">
-                    <CardComp onClick={() => navigate(`/product/${item.id}`)} removeItemFromCart={() => { dispatch(removeItemFromCart(item)); }} addToCartClick={() => { dispatch(addItemToCart(item)); }} id={item.id} thumbnail={item.thumbnail} title={item.title} description={item.description} rating={item.rating} price={item.price} discountPercentage={item.discountPercentage} shippingInformation={item.shippingInformation}
+                    <CardComp onClick={() => navigate(`/product/detail/${item.id}`)} removeItemFromCart={() => { dispatch(removeItemFromCart(item)); }} addToCartClick={() => { dispatch(addItemToCart(item)); }} id={item.id} thumbnail={item.thumbnail} title={item.title} description={item.description} rating={item.rating} price={item.price} discountPercentage={item.discountPercentage} shippingInformation={item.shippingInformation}
                     />
                   </Col>
                 </>

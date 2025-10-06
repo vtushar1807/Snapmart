@@ -384,6 +384,7 @@ input[type="email"] {
   margin-top: 2px;
   line-height: 1.2;
   text-shadow: none;
+  position: absolute;
 }
 
 .already-user-div {
@@ -771,6 +772,7 @@ img{
 
   background-color: rgb(166, 121, 233, 0.1);
   cursor: pointer;
+  min-height: 100vh;
 }
 
 .comment-div{
@@ -837,4 +839,54 @@ option:hover{
     padding-left: 13px;
     border: none;
     outline: none;
+}
+
+.contact-main{
+  height:100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.contact-main input, .comment{
+  outline: none;
+  border-radius: 8px;
+  border: 1px solid grey;
+  padding: 5px;
+  
+}
+.contact-main input::placeholder{
+  font-style: italic;
+  font-size: 13px;
+  padding: 4px;
+  
+}
+.feedback-input{
+  display: flex;
+  justify-content: space-between;
+}
+
+.inner-feedback-div{
+  padding: 27px;
+  /* background-color: rgba(255, 253, 253, 0.868); */
+  background-color: rgb(250, 250, 250);
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.feedback-h{
+  color:white;
+  background-color: rgb(30, 12, 96);
+  border-radius: 5px;
+  text-shadow: 2px 2px black;
+}
+
+.contact-main label{
+  font-size: 13px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.about-main{
+  height:100vh;
+  width:100vw;
 }

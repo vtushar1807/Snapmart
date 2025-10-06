@@ -39,22 +39,23 @@ async function handleCreateNewUser(req, res){
 async function handleValidateLogin(req,res){
     try {
         const{email, password} = req.body;
-        if(!email || !password) return res.status(200).json({msg:"Credentials are required"});
+        if(!email || !password) return res.status(400).json({msg:"Credentials are required"});
 
-        const user = await USER.findOne({email});
-
-
-        if(!user) return res.status(200).json({msg:"Invalid Credentials"});
+        
+            const user = await USER.findOne({email});
+            if(!user) return res.status(404).json({msg:"User not Found"});
 
             const compare = await compareWithhashed(password, user.password);
-
+            if(compare){
             const token = await createToken(user);
 
             res.cookie("token", token, {
                 httpOnly:true,
                 path:"/"
             }).status(200).json({msg:"Login Successful", user:user})
-
+        }
+        else return res.status(404).json({msg:"Invalid Credentials"});
+      
 
     } catch (error) {
         return res.status(500).json({msg:"Internal Server Error"});
@@ -83,7 +84,7 @@ async function handleProduct(req,res){
         const response = await PRODUCT.find({category:category});
 
         if(response){
-           return res.status(200).json({msg:"Successfully fetched Products", product:response});
+           return res.status(200).json({msg:"Product fetched Successfully", product:response});
         }
         return res.status(400).json({msg:"Invalid Category"});
 
@@ -115,7 +116,7 @@ async function handleSubscribe(req,res){
     //     },
     // })
 
-    const {username, email} = req.body;
+    const {email, username} = req.body;
     const checkSub = await SUBS.findOne({subscribedEmail:email});
 
     if(checkSub)
@@ -143,7 +144,7 @@ async function handleSubscribe(req,res){
     
     const info = await transporter.sendMail({
         from:"<tusharverma1807@gmail.com>",
-        to:"tusharverma29588@gmail.com",
+        to:email,
         subject:"Subscribed",
         // text:`Congratulations! You have subscribed to Snapmart`,
         html:`
@@ -160,6 +161,34 @@ async function handleSubscribe(req,res){
     }
 }
 
+async function handleProductDetail(req,res){
+    try {
+        const productId = parseInt(req.params.id);              //In DB it Product Id is a number
+
+        console.log(productId);
+        const productDetails = await PRODUCT.findOne({id:productId});
+        console.log(productDetails);
+        
+        if(!productDetails) return res.status(404).json({msg:"Product not found"});
+        else
+        return res.status(200).json({msg:"Product details found", product:productDetails})
+    } catch (error) {
+        return res.status(500).json({msg:"Internal Server Error"});
+    }
+}
+
+async function handleCartItems(req, res){
+    try {
+        const pid = parseInt(req.headers.id);
+        const cartProduct = await PRODUCT.findOne({id:pid});
+
+        if(!cartProduct) return res.status(404).json({msg:"Product not found"});
+        else return res.status(200).json({msg:"Product Found", product:cartProduct});
+    } catch (error) {
+        return res.status(500).json({msg:"Internal server Error"});
+    }
+}
+
 module.exports = {
 
     handleCreateNewUser,
@@ -167,5 +196,7 @@ module.exports = {
     handleHomepage,
     handleLogout,
     handleProduct,
-    handleSubscribe
+    handleSubscribe,
+    handleProductDetail,
+    handleCartItems
 }

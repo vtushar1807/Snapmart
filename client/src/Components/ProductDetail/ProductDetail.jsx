@@ -2,10 +2,12 @@ import { useEffect,useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Carousel from 'react-bootstrap/Carousel';
 import { useParams } from 'react-router';
-import { fetchAPIDetail } from '../../Networking/getAPIdata';
+// import { fetchAPIDetail } from '../../Networking/getAPIdata';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProductDetail } from '../../Redux/productDetailReducer';
 import { ClipLoaderFn } from '../Spinner/Spinners';
+import { Navigate } from 'react-router';
+import { fetchProductDetail } from '../../Redux/productDetailReducer';
 
 
 import { Container, Row, Col } from 'react-bootstrap';
@@ -16,13 +18,18 @@ export const ProductDetail = ()=>{
     const item = useSelector((store) => store.productDetailRed.itemDetail);             //Getting the detail of the product on which user clicked
     const params = useParams();                     //For reading the variable passed dynamically in url
     const dispatch = useDispatch();
+    const isLoggedIn = useSelector(store => store.logInRed.isLogin);
 
     const[loading, setLoading]=useState(true);
 
     useEffect(()=>{
 
+        if(!isLoggedIn)
+        return <Navigate to="/login"/>
+
         setTimeout(()=>{
-            fetchDetail();
+            fetchDetail(params.id);
+            
         }, 2000)
 
         return ()=> dispatch(cleanProductDetail());
@@ -36,16 +43,23 @@ export const ProductDetail = ()=>{
             return num.toFixed(2);
     }
 
-    const fetchDetail = async()=>{
+    const fetchDetail = async(id)=>{
 
         try{
 
-        const result = await fetchAPIDetail(params.id);          //Fetching the detail of the product based on its id, read from url with the help of useParams()
-        if(result.status==="Success"){
-        dispatch(addProductDetail(result.data.post));       //Setting product detail into store using addProductDetail reducer
-        console.log(result.data.post);
+        const resultAction = await dispatch(fetchProductDetail(id));        //Fetching the detail of the product based on its id, read from url with the help of useParams()
+        
+        if(fetchProductDetail.fulfilled.match(resultAction)){
+        console.log(resultAction.payload.msg);
+        
+        
+        dispatch(addProductDetail(resultAction.payload.product));       //Setting product detail into store using addProductDetail reducer
+        // console.log(result.data.post);
         
         }
+
+        else if (fetchProductDetail.rejected.match(resultAction))
+            console.log(resultAction.payload);
 
         }
         catch(arr)
@@ -61,7 +75,7 @@ export const ProductDetail = ()=>{
     
     return(
         <>
-        {loading ? <ClipLoaderFn loading={loading} mTop="11%" mBottom="11%" /> : null}
+        {loading ? <ClipLoaderFn loading={loading} mTop="8%" mBottom="11%" /> : null}
         {/* {console.log(item)} */}
         
         {item && Object.keys(item).length>0 ? 
@@ -133,10 +147,10 @@ export const ProductDetail = ()=>{
     <div className='bg-white mt-1 p-2'><h6 className='fw-bold'>SKU: </h6>{item.sku}</div>
             <div className='bg-white mt-1 p-2'><h6 className='fw-bold'>Tags: </h6>
             
-            {item.tags.map((ele) => (
+            {item.tags.map((ele, index) => (
                 
                 
-                <span style={{borderRadius:"7px", fontSize:"11px",padding:"1px 6px 2px"}} className='fw-bold bg-warning p-1'>{ele}</span>
+                <span key={index} style={{borderRadius:"7px", fontSize:"11px",padding:"1px 6px 2px"}} className='fw-bold bg-warning p-1'>{ele}</span>
                 
             ))}
             
@@ -163,7 +177,12 @@ export const ProductDetail = ()=>{
         </Container>
         
         </>
-        :null
+        :
+        <Container style={{minHeight:"53vh", display:"flex", justifyContent:"center", alignItems:"center"}} fluid="0">
+            <Row className='w-100'>
+                 
+            </Row>
+        </Container>
         }
         
         </>

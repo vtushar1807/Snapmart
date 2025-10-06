@@ -16,7 +16,8 @@ import { Men } from './Components/Screens/Men/Men';
 import { Perfumes } from './Components/Screens/Perfumes/Perfumes';
 import { Jewellery } from './Components/Screens/Jewellery/Jewellery';
 import { ProductDetail } from './Components/ProductDetail/ProductDetail';
-
+import { ContactUs } from './Components/Screens/Contactus/ContactUs';
+import { AboutUs } from './Components/Screens/Aboutus/AboutUs';
 
 function App() {
   
@@ -29,7 +30,9 @@ function App() {
     <Route path="/signup" element={<SignUp/>}></Route>
     <Route path="/login" element={<LogIn/>}></Route>
     <Route path="/" element={<Home/>}></Route>
-    <Route path="/cart" element={<CartComp/>}></Route>
+    <Route path="/product/cart" element={<CartComp/>}></Route>
+    <Route path="/contact" element={<ContactUs/>}></Route>
+    <Route path="/aboutus" element={<AboutUs/>}></Route>
 
     <Route path="/smartphones" element={<Smartphones/>}></Route>
     <Route path="/product/category/groceries" element={<Grocery/>}></Route>
@@ -39,7 +42,7 @@ function App() {
     <Route path="/watches" element={<Watches/>}></Route>
     <Route path="/shoes" element={<Shoes/>}></Route>
     <Route path="/perfumes" element={<Perfumes/>}></Route>
-    <Route path="/product/:id" element={<ProductDetail/>}></Route>
+    <Route path="/product/detail/:id" element={<ProductDetail/>}></Route>
 
       </Routes>
 

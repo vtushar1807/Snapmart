@@ -1,20 +1,23 @@
 import Carousel from 'react-bootstrap/Carousel';
 import { Container, Row, Col } from 'react-bootstrap';
-import a from '../../../assets/a.jpg'
-import b from '../../../assets/b.jpg'
-import c from '../../../assets/c.jpg'
-import d from '../../../assets/d.jpg'
-import e from '../../../assets/e.jpg'
-import f from '../../../assets/f.jpg'
+import a from '../../../assets/a.jpg';
+import b from '../../../assets/b.jpg';
+import c from '../../../assets/c.jpg';
+import d from '../../../assets/d.jpg';
+import e from '../../../assets/e.jpg';
+import f from '../../../assets/f.jpg';
 
-import grocery from '../../../assets/grocery.png'
-import jewellary from '../../../assets/jewellary.png'
-import smartphone from '../../../assets/smartphone.png'
-import perfume from '../../../assets/perfume.png'
-import shoes from '../../../assets/shoes.png'
-import women from '../../../assets/women.png'
-import watch from '../../../assets/watch.png'
-import men from '../../../assets/men.png'
+import grocery from '../../../assets/grocery.png';
+import jewellary from '../../../assets/jewellary.png';
+import smartphone from '../../../assets/smartphone.png';
+import perfume from '../../../assets/perfume.png';
+import shoes from '../../../assets/shoes.png';
+import women from '../../../assets/women.png';
+import watch from '../../../assets/watch.png';
+import men from '../../../assets/men.png';
+import { useFormik } from 'formik';
+import * as Yup from "yup";
+
 
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -60,9 +63,33 @@ export const  Home = ()=>{
   const dispatch=useDispatch();
   const currentUser=useSelector(store => store.logInRed.loggedInUser);
 
+  const formik = useFormik({
+    initialValues:{
+      subscribe:"",
+    },
+    validationSchema:Yup.object().shape({
+      subscribe:Yup.string().required("Required").email("Please Enter Valid Email").max(25, "Email is too long")
+    }),
 
-  const handleSubscribe = async (currentUser)=>{
-      const resultAction = await dispatch(subscribeUser(currentUser));
+    validateOnChange:false,
+    onSubmit:(values)=>{
+
+      console.log(values.subscribe);
+      const data = {
+        email:values.subscribe,
+        username:currentUser.username
+      }
+
+      handleSubscribe(data);
+      console.log("Email Submitted");
+      
+    }
+
+  })
+
+
+  const handleSubscribe = async (data)=>{
+      const resultAction = await dispatch(subscribeUser(data));
 
       if(subscribeUser.fulfilled.match(resultAction)){
         // console.log("User subscribed successfully");
@@ -139,8 +166,8 @@ export const  Home = ()=>{
           {
             CarouselImage && CarouselImage.length>0 ? 
 
-              CarouselImage.map((item) => (
-                <Carousel.Item>
+              CarouselImage.map((item,index) => (
+                <Carousel.Item key={index}>
               <img className='w-100' src={item} alt="" />
               </Carousel.Item>
               ))
@@ -192,9 +219,9 @@ export const  Home = ()=>{
   {
     featuredItems && featuredItems.length>0 ? 
 
-    featuredItems.map((item) => (
+    featuredItems.map((item, index) => (
 
-        <Col md="4" className='m-3' style={{width:"380px"}}>
+        <Col md="4" className='m-3' style={{width:"380px"}} key={index}>
            <Card className='animated-card'>
           <Card.Img style={{height:"150px",width:"175px",marginLeft:"auto", marginRight:"auto", marginTop:"20px"}} variant="top" src={item.image} />
             <Card.Body>
@@ -234,7 +261,16 @@ export const  Home = ()=>{
 
 <p className='fw-bold mt-5 mb-0 fs-2'>Stay Updated with SnapMart</p>
 <p className='mt-4'>Get exclusive deals, new arrivalsand shopping tips delivered to your inbox</p>
-<div className='d-flex w-100 mt-2' style={{justifyContent:"center"}}><input className='subscribe' placeholder="Enter your email address" type="text" /> <button onClick={() => handleSubscribe(currentUser)} className='sub-btn fw-bold dark-heading'>Subscribe</button></div>
+
+<form onSubmit={formik.handleSubmit}>
+<div className='d-flex w-100 mt-2' style={{justifyContent:"center"}}><input className='subscribe' name="subscribe" placeholder="Enter your email address" type="email" {...formik.getFieldProps('subscribe')}/>
+<br/>
+
+ <button type='submit' className='sub-btn fw-bold dark-heading'>Subscribe</button></div>
+{
+  formik.errors.subscribe && formik.touched.subscribe ? <span className='text-white' style={{fontSize:"12px", fontStyle:"italic", boxSizing:"border-box", position:"relative", right:"160px"}}>*{formik.errors.subscribe}</span>:null
+}
+</form>
 
 </Row>
 </Container>

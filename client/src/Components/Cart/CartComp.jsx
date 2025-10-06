@@ -6,41 +6,55 @@ import { removeItemFromCart } from "../../Redux/cartReducer"
 import { useEffect, useState } from "react"
 import { emptyCart } from "../../Redux/cartReducer"
 import { ClipLoaderFn } from "../Spinner/Spinners"
-import { fetchCartItems } from "../../Networking/getAPIdata"
 import { MdOutlineAdd } from "react-icons/md";
 import { GrFormSubtract } from "react-icons/gr";
+import { fetchCartItems } from "../../Redux/cartReducer"
 
 export const CartComp = ()=>{
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const cartItems = useSelector((store) => store.cartRed.cartItems);
 
     const [cartProducts, setCartProducts]=useState([]);
     const [totalQuantity, setTotalQuantity]=useState(0);
     const [totalAmount, setTotalAmount]=useState(0);
+    const[loading, setLoading]=useState(true);
+
+    const isLoggedIn = useSelector((store) => store.logInRed.isLogin);
+
+    useEffect(()=>{
+        isLoggedIn ? null : dispatch(emptyCart());
+    },[])
+
 
     useEffect(()=>{
         setTotalQuantity(cartItems.length);
         setTotalAmount(cartProducts.reduce((a, item) => (a+item.price),0));
     },[cartItems,cartProducts])
 
-    const[loading, setLoading]=useState(true);
+    useEffect(()=>{
+            getPost(cartItems);
+    }, [cartItems]);
 
-    const isLoggedIn = useSelector((store) => store.logInRed.isLogin);
-    isLoggedIn ? null : dispatch(emptyCart());
+    useEffect(() => {
+        !isLoggedIn?navigate("/login"):null
+    }, [isLoggedIn])
 
-    
-    const navigate = useNavigate();
-
-    const getPost = async ()=>{
+   
+    const getPost = async(cartItems)=>{
 
         try{
 
-            const result = await fetchCartItems(cartItems);
-            if(result.status==="Success")
+            const resultAction = await dispatch(fetchCartItems(cartItems));
+            if(fetchCartItems.fulfilled.match(resultAction))
             {
-                setCartProducts(result.data.post);
+                setCartProducts(resultAction.payload.product);
             }
+                
+
+            else if(fetchCartItems.rejected.match(resultAction))
+                console.log(resultAction.payload.msg);
         }
         catch(err){
             console.log("Error", err);
@@ -52,13 +66,6 @@ export const CartComp = ()=>{
 
     }
 
-    useEffect(()=>{
-            getPost();
-    }, [cartItems]);
-
-    useEffect(() => {
-        !isLoggedIn?navigate("/login"):null
-    }, [isLoggedIn])
 
 
     return(
@@ -80,16 +87,16 @@ export const CartComp = ()=>{
                     
                     <div className="bg-white cart-items mt-2" key={items.id}>
 
-                    <div onClick={() => navigate(`/product/${items.id}`)}>
+                    <div onClick={() => navigate(`/product/detail/${items.id}`)}>
                         <img style={{height:"100px"}}  src={items.thumbnail} alt="" />
                     </div>
 
                     <div className="ms-5 p-2 w-100 me-5">
                         <span style={{color:"#231159ff"}} onClick={()=>navigate(`/product/${items.id}`)} className="fw-bold">{items.title}</span><br/>
-                        <span onClick={()=>navigate(`/product/${items.id}`)} >{items.brand ? items.brand : "Exclusive"}</span> <span style={{float:"right"}}><img onClick={() => dispatch(removeItemFromCart(items))} height="21px" src="https://img.icons8.com/?size=100&id=64k1WPeHn58b&format=png&color=FA5252" alt="" /></span><span style={{float:"right", fontWeight:"bold", marginRight:"20px"}}><MdOutlineAdd/><span style={{border:"2px solid green", padding:"1px 6px", margin:"4px", fontSize:"14px"}}>{2}</span><GrFormSubtract/></span><br/>
-                        <span onClick={()=>navigate(`/product/${items.id}`)} className="text-danger fw-bold">₹{items.price}</span>
-                        <span onClick={()=>navigate(`/product/${items.id}`)} style={{fontSize:"10px", padding:"1px 6px 3px", borderRadius:"7px"}} className="bg-warning fw-bold">{items.discountPercentage}% OFF</span><br/>
-                        <span onClick={()=>navigate(`/product/${items.id}`)} style={{fontSize:"10px"}} className="text-secondary">{items.availabilityStatus}</span>
+                        <span onClick={()=>navigate(`/product/detail/${items.id}`)} >{items.brand ? items.brand : "Exclusive"}</span> <span style={{float:"right"}}><img onClick={() => dispatch(removeItemFromCart(items))} height="21px" src="https://img.icons8.com/?size=100&id=64k1WPeHn58b&format=png&color=FA5252" alt="" /></span><span style={{float:"right", fontWeight:"bold", marginRight:"20px"}}><MdOutlineAdd/><span style={{border:"2px solid green", padding:"1px 6px", margin:"4px", fontSize:"14px"}}>{2}</span><GrFormSubtract/></span><br/>
+                        <span onClick={()=>navigate(`/product/detail/${items.id}`)} className="text-danger fw-bold">₹{items.price}</span>
+                        <span onClick={()=>navigate(`/product/detail/${items.id}`)} style={{fontSize:"10px", padding:"1px 6px 3px", borderRadius:"7px"}} className="bg-warning fw-bold">{items.discountPercentage}% OFF</span><br/>
+                        <span onClick={()=>navigate(`/product/detail/${items.id}`)} style={{fontSize:"10px"}} className="text-secondary">{items.availabilityStatus}</span>
                     </div>
                    
                     </div>

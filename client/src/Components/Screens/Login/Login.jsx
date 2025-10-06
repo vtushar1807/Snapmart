@@ -61,28 +61,27 @@ export const LogIn = ()=>{
               setTimeout(()=>navigate("/"), 2000);
               }
 
-              else if(resultAction.payload.msg=="Credentials are required"){
-                setMessage("Credentials are required");
-                setVariant("danger");
-                setAlert(true);
-                setTimeout(()=>setAlert(false), 2000);
-              }
-
-              else if(resultAction.payload.msg=="Invalid Credentials"){
-                setMessage("Invalid Credentials ⚠️");
-                setVariant("danger");
-                setAlert(true);
-                setTimeout(()=>setAlert(false), 2000);
-              }
             }
 
           else if(validateUser.rejected.match(resultAction)){
 
-            setMessage(resultAction.payload.msg);             
+            const error_msg = resultAction.payload;
+
+            if(error_msg=="User not Found")
+            setMessage("User not found⚠️");
+
+            else if(error_msg=="Credentials are required")
+            setMessage("Credentials are required");
+
+            else if(error_msg=="Error Validating User")
+            setMessage("Error Validating User ⚠️");
+
+            else if(error_msg=="Invalid Credentials")
+            setMessage("Invalid Credentials🚫");
+
             setVariant("danger");
             setAlert(true);
             setTimeout(()=>setAlert(false), 2000);
-
           }
 
           // const signedUpUsers = JSON.parse(window.localStorage.getItem("SignedUpUsers"));

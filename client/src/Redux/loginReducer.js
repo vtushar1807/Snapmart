@@ -21,9 +21,11 @@ export const validateUser = createAsyncThunk('validateUser', async(user, {reject
 
             const data = await response.json();
             if(response.ok)
-                return data;
+            return data;
             else
-                return rejectWithValue("User not found");
+            return rejectWithValue(data.msg);
+        
+                
     } catch (error) {
         return rejectWithValue("Error Requesting Login");
     }

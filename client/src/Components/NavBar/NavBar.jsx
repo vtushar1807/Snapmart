@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FiLogOut } from "react-icons/fi";
+import { emptyCart } from '../../Redux/cartReducer';
 
 export const NavBar = () => {
 
@@ -60,6 +61,7 @@ export const NavBar = () => {
            console.log("Logged out successfully");
             navigate("/");
             dispatch(setLogInFn());
+            dispatch(emptyCart());
         }
 
         else if(executeLogout.rejected.match(resultAction)){
@@ -100,9 +102,9 @@ export const NavBar = () => {
           <Nav className="mb-auto mt-auto d-flex align-items-center navOptions">
        
           <Nav.Link className='text-white' as={Link} to="/">Home</Nav.Link>
-          <Nav.Link className='text-white' as={Link} to="/about">About Us</Nav.Link>
+          <Nav.Link className='text-white' as={Link} to="/aboutus">About Us</Nav.Link>
           <Nav.Link className='text-white' as={Link} to="/contact">Contact</Nav.Link>
-          <Nav.Link className='text-white' as={Link} to="/cart"><FaShoppingCart className='fs-15'/> 
+          <Nav.Link className='text-white' as={Link} to="/product/cart"><FaShoppingCart className='fs-15'/> 
           
           Cart<span className='fw-bold' style={{fontSize:"12px", position:"absolute", top:"5px", left:"65px", color:"black", backgroundColor:"white", padding:"0px 5px", borderRadius:"20px"}}>{cartItems.length>0 ? cartItems.length : null}</span>
           
